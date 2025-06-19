@@ -73,6 +73,13 @@ const Home = () => {
     }, 100);
   };
 
+  const init = () => {
+    setCurrentIndex(1);
+    setWinnerCat(CATS[0]!);
+    setPrevWinnerCat(CATS[0]!);
+    setIsFinished(false);
+  };
+
   const sendMail = (winnerCatName: string, preWinnerCatName: string) => {
     try {
       const res = axios.post("/api/send-mail", {
@@ -85,6 +92,7 @@ const Home = () => {
         title: "HTTP通信に失敗しました。",
       });
     }
+    init();
   };
 
   if (isFinished) {
@@ -99,7 +107,12 @@ const Home = () => {
           className="rounded-lg shadow-md"
           style={{ width: "200px", height: "200px", objectFit: "cover" }}
         />
-        <Button onPress={() => sendMail(winnerCat.link, prevWinnerCat.link)} />
+        <Button
+          className="bg-blue-500 text-white font-bold"
+          onPress={() => sendMail(winnerCat.link, prevWinnerCat.link)}
+        >
+          もう一度
+        </Button>
       </div>
     );
   }
@@ -141,10 +154,6 @@ const Home = () => {
           />
         </button>
       </div>
-
-      <Button onPress={() => sendMail("a", "b")} aria-label="aaa">
-        aa
-      </Button>
     </div>
   );
 };
