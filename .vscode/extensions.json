@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode", // Prettier
+    "dbaeumer.vscode-eslint", // ESLint
+    "yoavbls.pretty-ts-errors", // TypeScript エラーの見やすさ向上
+    "formulahendry.auto-rename-tag", // HTMLで閉じタグを自動修正
+    "dsznajder.es7-react-js-snippets", // Reactスニペット
+    "bradlc.vscode-tailwindcss" // Tailwinc CSS記述サポート
+  ]
+}

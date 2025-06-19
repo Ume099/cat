@@ -1,0 +1,52 @@
+{
+  "name": "@repo/talent-engineer",
+  "version": "0.0.0",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "./globals.css": "./dist/index.css",
+    "./*": "./src/*.tsx"
+  },
+  "license": "EULA",
+  "scripts": {
+    "build": "tailwindcss -i ./src/globals.css -o ./dist/index.css",
+    "check-types": "tsc --noEmit",
+    "dev": "tailwindcss -i ./src/globals.css -o ./dist/index.css --watch",
+    "lint": "eslint src --max-warnings 0"
+  },
+  "peerDependencies": {
+    "react": " ^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "dependencies": {
+    "@repo/ui": "*",
+    "js-cookie": "^3.0.5",
+    "next": "^15.2.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@next/eslint-plugin-next": "^15.2.1",
+    "@repo/eslint-config": "*",
+    "@repo/tailwind-config": "*",
+    "@repo/typescript-config": "*",
+    "@types/js-cookie": "^3.0.6",
+    "@types/node": "^22.13.9",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.21.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "typescript": "5.8.2",
+    "@heroui/date-input": "^2.3.16",
+    "@heroui/react": "^2.7.5",
+    "@heroui/system": "^2.4.13",
+    "@heroui/theme": "^2.4.13",
+    "framer-motion": "^12.5.0"
+  }
+}

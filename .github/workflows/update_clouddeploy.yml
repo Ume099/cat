@@ -1,0 +1,74 @@
+# .github/workflows/update_clouddeploy.yml
+name: Apply Cloud Deploy Config
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'infra/clouddeploy/**'
+      - '.github/workflows/update_clouddeploy.yml'
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write      # WIF 用
+      contents: read
+
+    # ---------------------------- 変数を一元管理 -----------------------------
+    env:
+      REGION: asia-northeast1
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GCP_WIF_PROVIDER: ${{ secrets.GCP_WIF_PROVIDER }}
+      GCP_SERVICE_ACCOUNT_EMAIL:         ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
+    # -----------------------------------------------------------------------
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1) GitHub → GCP Workload Identity Federation
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.GCP_WIF_PROVIDER }}
+          service_account:           ${{ env.GCP_SERVICE_ACCOUNT_EMAIL }}
+
+      # 2) gcloud セットアップ
+      - uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          version: latest
+
+      # 3) YAML を適用
+      - name: Apply Cloud Deploy targets
+        shell: bash -euo pipefail {0}
+        run: |
+          shopt -s nullglob
+          # まず targets/ 以下だけ apply
+          for f in infra/clouddeploy/targets/*.yaml; do
+            echo "::group::Applying $f"
+            gcloud deploy apply \
+              --file="$f" \
+              --region="$REGION" \
+              --project="$GCP_PROJECT_ID" \
+              --quiet
+            echo "::endgroup::"
+          done
+          if [ $(ls infra/clouddeploy/targets/*.yaml | wc -l) -eq 0 ]; then
+            echo "::warning ::No Target YAML files found."
+          fi
+
+      - name: Apply Cloud Deploy pipeline
+        shell: bash -euo pipefail {0}
+        run: |
+          PIPELINE_FILE="infra/clouddeploy/delivery-pipeline.yaml"
+          if [ -f "$PIPELINE_FILE" ]; then
+            echo "::group::Applying $PIPELINE_FILE"
+            gcloud deploy apply \
+              --file="$PIPELINE_FILE" \
+              --region="$REGION" \
+              --project="$GCP_PROJECT_ID" \
+              --quiet
+            echo "::endgroup::"
+          else
+            echo "::warning ::No pipeline.yaml found; nothing to apply."
+          fi
