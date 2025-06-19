@@ -23,12 +23,7 @@ npm run dev
 
 ### Appとpackage
 
-- `apps/office`: Next.jsとTailwindcssのランチャーアプリ
-- `apps/works`: Next.jsとTailwindcssのランチャーアプリ(未実装)
-- `packages/ui`: ランチャーアプリで使用するuiコンポーネント集
-- `packages/calendar, chat, gantt, admin, order-management, project, settings`: ランチャーアプリで使用するローカルパッケージ
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- `apps/cat`: Next.jsとTailwindcssのcatアプリ
 
 ## Visual Studio Code設定
 

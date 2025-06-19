@@ -8,7 +8,7 @@
 npm run dev
 ```
 
-- office: [http://localhost:3000/office](http://localhost:3000/office)
+- cat: [http://localhost:3000/cat](http://localhost:3000/cat)
 
 # docker起動
 

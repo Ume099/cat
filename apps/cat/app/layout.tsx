@@ -2,6 +2,7 @@ import Header from "./components/Header";
 import "./globals.css";
 
 import React from "react";
+import Providers from "./providers";
 
 export default function RootLayout({
   children,
@@ -11,10 +12,12 @@ export default function RootLayout({
   return (
     <html lang="jp">
       <body>
-        <Header />
-        <main className="h-[calc(100vh-52px)] flex flex-col items-center justify-center px-8">
-          {children}
-        </main>
+        <Providers>
+          <Header />
+          <main className="h-[calc(100vh-52px)] flex flex-col items-center justify-center px-8">
+            {children}
+          </main>
+        </Providers>
       </body>
     </html>
   );
