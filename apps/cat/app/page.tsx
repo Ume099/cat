@@ -16,8 +16,7 @@ const CATS = [
   { id: 7, link: "/russia-short.webp" },
   { id: 8, link: "/sai-long.webp" },
   { id: 9, link: "/sco-long.webp" },
-  { id: 10, link: "/sco-long2.webp" },
-  { id: 11, link: "/sco-short2.webp" },
+  { id: 10, link: "/sco-long.webp" },
 ];
 
 const SIZE = "110px";
@@ -37,17 +36,16 @@ const Home = () => {
   const [pressed, setPressed] = useState<"left" | "right" | null>(null);
 
   // 👇 MouseEvent でクリック座標を取得できるようにする
-  const handleVote = async (
+  const handleVote = (
     selected: "left" | "right",
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     setPressed(selected);
 
-    // クリック位置を取得
     const x = event.clientX / window.innerWidth;
     const y = event.clientY / window.innerHeight;
 
-    setTimeout(() => {
+    setTimeout(async () => {
       confetti({
         particleCount: 100,
         spread: 70,
@@ -57,20 +55,21 @@ const Home = () => {
       const challenger = CATS[currentIndex]!;
       const nextIndex = currentIndex + 1;
 
-      const res = selected === "left" ? challenger : winnerCat;
-      setPrevWinnerCat(res);
-      // 👇 負けた猫を保存
-      if (selected === "left") {
-        setPrevWinnerCat(challenger); // 右を選ばなかった＝右が負けた
-      } else {
-        setPrevWinnerCat(winnerCat); // 左を選ばなかった＝左が負けた
-        setWinnerCat(challenger); // 勝者入れ替え
-      }
+      const isLeft = selected === "left";
+      const newWinner = isLeft ? winnerCat : challenger;
+      const newLoser = isLeft ? challenger : winnerCat;
+
+      // 状態を更新（後でUIに反映される）
+      setWinnerCat(newWinner);
+      setPrevWinnerCat(newLoser);
 
       if (nextIndex >= CATS.length) {
         setIsLoading(true);
-        sendMail(res.link, prevWinnerCat.link);
+
+        await sendMail(newWinner.link, newLoser.link);
+
         setIsFinished(true);
+        setIsLoading(false);
       } else {
         setCurrentIndex(nextIndex);
       }
