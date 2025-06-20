@@ -117,9 +117,6 @@ const Home = () => {
           className="rounded-lg shadow-md"
           style={{ width: "200px", height: "200px", objectFit: "cover" }}
         />
-        <Button className="bg-blue-500 text-white font-bold" onPress={init}>
-          もう一度
-        </Button>
       </div>
     );
   }
