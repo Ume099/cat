@@ -21,12 +21,13 @@ export async function POST(req: Request) {
     subject: `回答されました。`,
     html: `
       <p>
-        1: ${data.no1}<br>
-        2: ${data.no2}
+        1: 
+        <a href="https://cat-cat-delta.vercel.app/">https://cat-cat-delta.vercel.app${data.no1}</a><br>
+        2: 
+        <a href="https://cat-cat-delta.vercel.app/">https://cat-cat-delta.vercel.app${data.no2}</a><br>
       </p>
       <p>
-        <a href="https://alt-prime.com/seatMap">alt-prime.com/seatMap</a>
-        よりご確認下さい。
+        <a href="https://cat-cat-delta.vercel.app/">https://cat-cat-delta.vercel.app/</a>
       </p>
     `,
   };

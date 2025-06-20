@@ -12,16 +12,18 @@ const CATS = [
   { id: 3, link: "/british-short.webp" },
   { id: 4, link: "/british-short2.webp" },
   { id: 5, link: "/ragdoll-long.webp" },
-  { id: 6, link: "/russia-short.webp" },
-  { id: 7, link: "/sai-long.webp" },
-  { id: 8, link: "/sco-long.webp" },
-  { id: 9, link: "/sco-long2.webp" },
-  { id: 10, link: "/sco-short2.webp" },
+  { id: 6, link: "/ranchan.jpg" },
+  { id: 7, link: "/russia-short.webp" },
+  { id: 8, link: "/sai-long.webp" },
+  { id: 9, link: "/sco-long.webp" },
+  { id: 10, link: "/sco-long2.webp" },
+  { id: 11, link: "/sco-short2.webp" },
 ];
 
 const SIZE = "110px";
 
 const Home = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [winnerCat, setWinnerCat] = useState<{
     id: number;
     link: string;
@@ -35,7 +37,7 @@ const Home = () => {
   const [pressed, setPressed] = useState<"left" | "right" | null>(null);
 
   // 👇 MouseEvent でクリック座標を取得できるようにする
-  const handleVote = (
+  const handleVote = async (
     selected: "left" | "right",
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -55,6 +57,8 @@ const Home = () => {
       const challenger = CATS[currentIndex]!;
       const nextIndex = currentIndex + 1;
 
+      const res = selected === "left" ? challenger : winnerCat;
+      setPrevWinnerCat(res);
       // 👇 負けた猫を保存
       if (selected === "left") {
         setPrevWinnerCat(challenger); // 右を選ばなかった＝右が負けた
@@ -64,6 +68,8 @@ const Home = () => {
       }
 
       if (nextIndex >= CATS.length) {
+        setIsLoading(true);
+        sendMail(res.link, prevWinnerCat.link);
         setIsFinished(true);
       } else {
         setCurrentIndex(nextIndex);
@@ -80,20 +86,25 @@ const Home = () => {
     setIsFinished(false);
   };
 
-  const sendMail = (winnerCatName: string, preWinnerCatName: string) => {
+  const sendMail = async (winnerCatName: string, preWinnerCatName: string) => {
     try {
-      const res = axios.post("/api/send-mail", {
+      const res = await axios.post("/api/send-mail", {
         no1: winnerCatName,
         no2: preWinnerCatName,
       });
+      console.log(res.status);
     } catch (error) {
       console.error(error);
       addToast({
         title: "HTTP通信に失敗しました。",
       });
     }
-    init();
+    setIsLoading(false);
   };
+
+  if (isLoading) {
+    return <div>回答を集計中...</div>;
+  }
 
   if (isFinished) {
     return (
@@ -107,10 +118,7 @@ const Home = () => {
           className="rounded-lg shadow-md"
           style={{ width: "200px", height: "200px", objectFit: "cover" }}
         />
-        <Button
-          className="bg-blue-500 text-white font-bold"
-          onPress={() => sendMail(winnerCat.link, prevWinnerCat.link)}
-        >
+        <Button className="bg-blue-500 text-white font-bold" onPress={init}>
           もう一度
         </Button>
       </div>
@@ -126,7 +134,7 @@ const Home = () => {
       </h1>
       <div className="flex space-x-8">
         <button
-          onClick={(e) => handleVote("left", e)} // 👈 event 渡す
+          onClick={(e) => handleVote("left", e)}
           className={classNames(
             "transition transform duration-100 ease-in-out focus:outline-none",
             pressed === "left" ? "scale-90" : "scale-100"
